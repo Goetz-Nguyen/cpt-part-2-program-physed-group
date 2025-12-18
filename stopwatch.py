@@ -3,7 +3,7 @@ import time
 input("press enter to start timer")
 start = time.monotonic()
 
-print ("Counting")
+print ("Counting...")
 
 input("press enter to start timer")
 end = time.monotonic()
