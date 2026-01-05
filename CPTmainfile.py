@@ -5,8 +5,8 @@ ICS4U CPT - PhysEd Workout App
 """
 
 # First off, we'll import modules that will certainly be used throughout the program
-import rich # This is a very important one, used for UI
-from rich.console import Console # This is where we get our Console class constructor
+from rich.console import Console
+
 console = Console() # This is a Console class constructor (belongs to `rich` library); acts as a high-level interface
 
 class Human:
@@ -101,4 +101,43 @@ class Female(Human):
         else:
             self.height = height
 
-# We should add UI after this...
+
+def display_menu():
+    """Displays the main menu and returns the user's choice."""
+    console.print("\n[bold cyan]PhysEd Workout App[/bold cyan]")
+    console.print("[yellow]Main Menu[/yellow]")
+    console.print("1. Create User Profile")
+    console.print("2. View Workout Plans")
+    console.print("3. Track Progress")
+    console.print("4. Calculate BMI")
+    console.print("5. Get Nutrition Advice")
+    console.print("6. Exit")
+    
+    choice = console.input("\n[green]Select an option (1-6):[/green] ")
+    return choice
+
+
+def main():
+    """Main function to run the application."""
+    while True:
+        choice = display_menu()
+        
+        if choice == "1":
+            console.print("[blue]Create User Profile[/blue] - Under Construction")
+        elif choice == "2":
+            console.print("[blue]View Workout Plans[/blue] - Under Construction")
+        elif choice == "3":
+            console.print("[blue]Track Progress[/blue] - Under Construction")
+        elif choice == "4":
+            console.print("[blue]Calculate BMI[/blue] - Under Construction")
+        elif choice == "5":
+            console.print("[blue]Get Nutrition Advice[/blue] - Under Construction")
+        elif choice == "6":
+            console.print("[red]Exiting application...[/red]")
+            break
+        else:
+            console.print("[red]Invalid choice. Please try again.[/red]")
+
+
+if __name__ == "__main__":
+    main()
