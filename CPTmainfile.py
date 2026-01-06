@@ -1,22 +1,25 @@
 """
-authors: Japjot Singh Rajbans, Matteo Orlando, Aidan Dwyer, Jacksen Daniels Daekin
-date finished: --
+authors: Japjot Singh Rajbans, Matteo Orlando, Aidan Dwyer, Jacksen Daniels Deakin
+date finished: January 12, 2026
 ICS4U CPT - PhysEd Workout App
 """
 
-# First off, we'll import modules that will certainly be used throughout the program
-import rich # This is a very important one, used for UI
-from rich.console import Console # This is where we get our Console class constructor
-console = Console() # This is a Console class constructor (belongs to `rich` library); acts as a high-level interface
+from rich.console import Console
+
+console = Console()
+
+current_user = None  # will hold the created user profile
+
 
 class Human:
     """
     The start of it all: a human with common attributes, regardless of gender, age, or body measurements.
     The weight is measured in kilograms, not pounds, to align with the Canadian and the global weight standards.
     """
-    def __init__(self, age: int, weight: int | float):
+    def __init__(self, age: int | None, weight: int | float | None):
         """
         Initializes attributes for this class.
+
 
         Invariants:
             - Age must be typed in, else, age will be assumed as 18.
@@ -24,81 +27,295 @@ class Human:
             - Weight must be typed in, else, weight will be assumed as 62 kgs.
             - Weight must be greater than zero and lesser than 635 kgs. The upper bound is specific, as the heaviest human in the world was recorded to be 635 kgs.
 
+
         Args:
-            age (int): The age of the user.
-            weight (int): The weight of the user.
+            age (int | None): The age of the user.
+            weight (int | float | None): The weight of the user.
+
 
         Returns:
             None
         """
-        # Implementations with invariants
-        if not age:
-            self.age = 18
 
-        if age < 0 and age > 100:
-            return False
+        if age is None:
+            age = 18
+        try:
+            age = int(age)
+        except Exception:
+            age = 18
+        if age <= 0 or age > 100:
+            age = 18
 
-        if not weight:
-            self.weight = 62 # This is the average human weight globally (Source: https://www.livescience.com/36470-human-population-weight.html)
-
-        if weight < 0 and weight > 635:
-            return False 
+        if weight is None:
+            weight = 62.0
+        try:
+            weight = float(weight)
+        except Exception:
+            weight = 62.0
+        if weight <= 0 or weight > 635:
+            weight = 62.0
 
         self.age = age
         self.weight = weight
+        # height is optional and may be set by subclasses or externally (in cm)
+        self.height = None
 
     def get_age(self):
-        """Returns the user's age."""
         return self.age
 
     def get_weight(self):
-        """Returns the user's weight."""
         return self.weight
 
     def set_age(self, new_age: int):
-        """
-        Sets a new age for the user.
-
-        Args:
-            new_age: The new age of the user.
-
-        Returns:
-            None
-        """
         self.age = new_age
 
     def set_weight(self, new_weight: int | float):
-        """
-        Sets a new weight for the user.
-
-        Args:
-            new_weight: The new weight of the user.
-
-        Returns:
-            None
-        """
         self.weight = new_weight
 
+    def get_height(self):
+        return self.height
+
+    def set_height(self, new_height: int | float):
+        try:
+            self.height = float(new_height)
+        except Exception:
+            self.height = None
+
     def __repr__(self) -> str:
-        """Returns a developer-friendly string representation."""
-        return f"Character(age='{self.age}', weight={self.weight})"
+        return f"Human(age={self.age}, weight={self.weight}, height={self.height})"
+
 
 class Male(Human):
-    def __init__(self, age: int, weight: int | float, height: int | float):
+    def __init__(self, age: int | None = None, weight: int | float | None = None, height: int | float | None = None):
         super().__init__(age, weight)
-        
-        if not height:
-            self.height = 171 # This is the average male height globally (Source: https://ourworldindata.org/human-height#:~:text=Here%2C%20we%20examine%20variations%20in,every%20country%20in%20the%20world.)
+        if height is None:
+            self.height = 171.0
         else:
-            self.height = height
+            try:
+                self.height = float(height)
+            except Exception:
+                self.height = 171.0
+
 
 class Female(Human):
-    def __init__(self, age: int, weight: int | float, height: int | float):
+    def __init__(self, age: int | None = None, weight: int | float | None = None, height: int | float | None = None):
         super().__init__(age, weight)
-        
-        if not height:
-            self.height = 159 # This is the average female height globally (Source: https://ourworldindata.org/human-height#:~:text=Here%2C%20we%20examine%20variations%20in,every%20country%20in%20the%20world.)
+        if height is None:
+            self.height = 159.0
         else:
-            self.height = height
+            try:
+                self.height = float(height)
+            except Exception:
+                self.height = 159.0
 
-# We should add UI after this...
+
+def display_menu():
+    console.print("\n[bold cyan]PhysEd Workout App[/bold cyan]")
+    console.print("[yellow]Main Menu[/yellow]")
+    console.print("1. Create User Profile")
+    console.print("2. Get Workout Plans")
+    console.print("3. Track Progress via Graph")
+    console.print("4. Calculate BMI")
+    console.print("5. Get Meal Plans")
+    console.print("6. Exit")
+
+    choice = console.input("\n[green]Select an option (1-6):[/green] ")
+    return choice.strip()
+
+
+def create_user_profile():
+    global current_user
+    console.print("\n[blue]Create User Profile[/blue]")
+    gender = console.input("Gender ([green]M[/green]/[green]F[/green], leave blank for Other): ").strip().upper()
+
+    age_in = console.input("Age in years [default 18]: ").strip()
+    weight_in = console.input("Weight in kg [default 62]: ").strip()
+    height_in = console.input("Height in cm (leave blank for gender default): ").strip()
+
+    # parse with safe fallbacks
+    try:
+        age = int(age_in) if age_in else None
+    except Exception:
+        age = None
+    try:
+        weight = float(weight_in) if weight_in else None
+    except Exception:
+        weight = None
+    try:
+        height = float(height_in) if height_in else None
+    except Exception:
+        height = None
+
+    if gender == "M":
+        user = Male(age, weight, height)
+    elif gender == "F":
+        user = Female(age, weight, height)
+    else:
+        user = Human(age, weight)
+        # choose a neutral default height if none provided
+        if height is None:
+            user.height = 165.0
+        else:
+            try:
+                user.height = float(height)
+            except Exception:
+                user.height = 165.0
+
+    current_user = user
+    console.print("[green]Profile created successfully.[/green]")
+    console.print(f" - Age: {current_user.age}")
+    console.print(f" - Weight: {current_user.weight} kg")
+    console.print(f" - Height: {getattr(current_user, 'height', 'Not set')} cm")
+
+
+def calculate_bmi(use_profile: bool = True):
+    """
+    Simple, clear BMI calculator:
+    - If use_profile and a profile exists, use its weight/height (or ask for missing height).
+    - Otherwise prompt for weight and height.
+    - Validate inputs, compute BMI, and print category.
+    """
+    console.print("\n[blue]BMI Calculator[/blue]")
+
+    # Get weight and height (cm)
+    weight = None
+    height_cm = None
+
+    if use_profile and current_user is not None:
+        weight = current_user.weight
+        height_cm = current_user.height
+        if height_cm is None:
+            h_in = console.input("Profile has no height. Enter height in cm: ").strip()
+            try:
+                height_cm = float(h_in)
+            except Exception:
+                console.print("[red]Invalid height. Aborting BMI calculation.[/red]")
+                return
+    else:
+        w_in = console.input("Enter weight in kg: ").strip()
+        h_in = console.input("Enter height in cm: ").strip()
+        try:
+            weight = float(w_in)
+            height_cm = float(h_in)
+        except Exception:
+            console.print("[red]Invalid input. Aborting BMI calculation.[/red]")
+            return
+
+    # Basic validation
+    if weight is None or height_cm is None:
+        console.print("[red]Missing data. Aborting.[/red]")
+        return
+    if weight <= 0:
+        console.print("[red]Weight must be positive. Aborting.[/red]")
+        return
+    if height_cm <= 0:
+        console.print("[red]Height must be positive. Aborting.[/red]")
+        return
+
+    # Calculation
+    height_m = height_cm / 100.0
+    bmi = weight / (height_m * height_m)
+    bmi_rounded = round(bmi, 2)
+
+    # Simple WHO categories
+    if bmi < 18.5:
+        category = "Underweight"
+    elif bmi < 25.0:
+        category = "Normal weight"
+    elif bmi < 30.0:
+        category = "Overweight"
+    else:
+        category = "Obese"
+
+    console.print(f"[yellow]BMI:[/yellow] {bmi_rounded} kg/m² — [bold]{category}[/bold]")
+
+
+    
+
+def calculate_bmr(use_profile: bool = True):
+
+    weight = None
+    height_cm = None
+    age = 0
+
+    if use_profile and current_user is not None:
+        weight = current_user.weight
+        height_cm = current_user.height
+        age = current_user.age
+        if height_cm is None:
+            h_in = console.input("Profile has no height. Enter height in cm: ").strip()
+            try:
+                height_cm = float(h_in)
+            except Exception:
+                console.print("[red]Invalid height. Aborting BMI calculation.[/red]")
+                return
+    else:
+        w_in = console.input("Enter weight in kg: ").strip()
+        h_in = console.input("Enter height in cm: ").strip()
+        a_in = console.input("Enter age:").strip()
+        try:
+            weight = float(w_in)
+            height_cm = float(h_in)
+            age = float(a_in)
+        except Exception:
+            console.print("[red]Invalid input. Aborting BMI calculation.[/red]")
+            return
+
+    # Basic validation
+    if weight is None or height_cm is None:
+        console.print("[red]Missing data. Aborting.[/red]")
+        return
+    if weight <= 0:
+        console.print("[red]Weight must be positive. Aborting.[/red]")
+        return
+    if height_cm <= 0:
+        console.print("[red]Height must be positive. Aborting.[/red]")
+        return
+
+    # Calculation
+    mens_bmr = (10 * weight) + (6.25 * height_cm) - (5 * age) + 5
+
+    female_bmr = (10 * weight) + (6.25 * height_cm) - (5 * age) - 161
+    
+
+    # Simple WHO categories
+    if current_user == Male:
+        mens_bmr
+        console.print(f"Your daily calories your should intake is {mens_bmr}")
+    else:
+        female_bmr
+        console.print(f"Your daily calories your should intake is {female_bmr}")
+
+
+def main():
+    while True:
+        choice = display_menu()
+
+        if choice == "1":
+            create_user_profile()
+        elif choice == "2":
+            console.print("[blue]View Workout Plans[/blue] - Under Construction")
+        elif choice == "3":
+            console.print("[blue]Track Progress[/blue] - Under Construction")
+        elif choice == "4":
+            # use profile if available, otherwise prompt
+            if current_user is not None:
+                calculate_bmi(use_profile=True)
+            else:
+                # ask whether to use ad-hoc inputs
+                use = console.input("No profile found. Calculate BMI by entering values? (y/n): ").strip().lower()
+                if use == "n":
+                    console.print("[red]Cancelled BMI calculation.[/red]")
+                else:
+                    calculate_bmi(use_profile=False)
+        elif choice == "5":
+            calculate_bmr(use_profile=True)
+        elif choice == "6":
+            console.print("[red]Exiting application...[/red]")
+            break
+        else:
+            console.print("[red]Invalid choice. Please try again.[/red]")
+
+
+if __name__ == "__main__":
+    main()
