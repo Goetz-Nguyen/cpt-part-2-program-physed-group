@@ -4,12 +4,10 @@ date finished: January 12, 2026
 ICS4U CPT - PhysEd Workout App
 """
 
+# Importing modules we'll use for the entirety of this program!
 from rich.console import Console
-
 console = Console()
-
 current_user = None  # will hold the created user profile
-
 
 class Human:
     """
@@ -20,23 +18,19 @@ class Human:
         """
         Initializes attributes for this class.
 
-
         Invariants:
             - Age must be typed in, else, age will be assumed as 18.
             - Age must be greater than zero and lesser than hundred.
             - Weight must be typed in, else, weight will be assumed as 62 kgs.
             - Weight must be greater than zero and lesser than 635 kgs. The upper bound is specific, as the heaviest human in the world was recorded to be 635 kgs.
 
-
         Args:
             age (int | None): The age of the user.
             weight (int | float | None): The weight of the user.
 
-
         Returns:
             None
         """
-
         if age is None:
             age = 18
         try:
@@ -84,7 +78,6 @@ class Human:
     def __repr__(self) -> str:
         return f"Human(age={self.age}, weight={self.weight}, height={self.height})"
 
-
 class Male(Human):
     def __init__(self, age: int | None = None, weight: int | float | None = None, height: int | float | None = None):
         super().__init__(age, weight)
@@ -95,7 +88,6 @@ class Male(Human):
                 self.height = float(height)
             except Exception:
                 self.height = 171.0
-
 
 class Female(Human):
     def __init__(self, age: int | None = None, weight: int | float | None = None, height: int | float | None = None):
@@ -108,7 +100,6 @@ class Female(Human):
             except Exception:
                 self.height = 159.0
 
-
 def display_menu():
     console.print("\n[bold cyan]PhysEd Workout App[/bold cyan]")
     console.print("[yellow]Main Menu[/yellow]")
@@ -119,9 +110,9 @@ def display_menu():
     console.print("5. Get Meal Plans")
     console.print("6. Exit")
 
+    # Choice selections
     choice = console.input("\n[green]Select an option (1-6):[/green] ")
     return choice.strip()
-
 
 def create_user_profile():
     global current_user
@@ -166,7 +157,6 @@ def create_user_profile():
     console.print(f" - Age: {current_user.age}")
     console.print(f" - Weight: {current_user.weight} kg")
     console.print(f" - Height: {getattr(current_user, 'height', 'Not set')} cm")
-
 
 def calculate_bmi(use_profile: bool = True):
     """
@@ -229,7 +219,6 @@ def calculate_bmi(use_profile: bool = True):
 
     console.print(f"[yellow]BMI:[/yellow] {bmi_rounded} kg/m² — [bold]{category}[/bold]")
 
-
 def main():
     while True:
         choice = display_menu()
@@ -258,7 +247,6 @@ def main():
             break
         else:
             console.print("[red]Invalid choice. Please try again.[/red]")
-
 
 if __name__ == "__main__":
     main()
