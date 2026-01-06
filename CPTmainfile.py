@@ -100,19 +100,52 @@ class Female(Human):
             except Exception:
                 self.height = 159.0
 
-def display_menu():
-    console.print("\n[bold cyan]PhysEd Workout App[/bold cyan]")
-    console.print("[yellow]Main Menu[/yellow]")
-    console.print("1. Create User Profile")
-    console.print("2. Get Workout Plans")
-    console.print("3. Track Progress via Graph")
-    console.print("4. Calculate BMI")
-    console.print("5. Get Meal Plans")
-    console.print("6. Exit")
+def display_menu() -> str:
+    """
+    A beautiful main menu display & choice selector, made using the Rich library!
+    
+    Args:
+        None
 
-    # Choice selections
-    choice = console.input("\n[green]Select an option (1-6):[/green] ")
-    return choice.strip()
+    Returns:
+        str: It returns '1', '2', '3', '4', '5', or '6' based on the user's choice. Exits the program if invalid choice is detected!
+    """
+    # The welcome screen!
+    console.print(Panel(
+        "[bold cyan]Welcome![/]\n\n"
+        "This is a PhysEd workout app, made to [bold yellow]promote PhysEd[/] to explore maths (and also physics)!\n\n"
+        "Made by: Jacksen Daniels Daekin, Aidan Dwyer, Matteo Orlando, Japjot Singh Rajbans"
+        "[bold green]Let's begin, shall we? :)[/]",
+        title="[bold white]PhysEd Workout App[/]",
+        border_style="bright_magenta",
+        padding=(1, 2),
+        highlight=True
+    ))
+
+    # Main Menu
+    console.print(Panel(
+        "[bold green]1[/] --> [white]Create user profile[/]\n",
+        "[bold green]2[/] --> [white]Get workout plans[/]\n"
+        "[bold green]3[/] --> [white]Track progress via graph[/]\n"
+        "[bold green]4[/] --> [white]Calculate your BMI![/]\n"
+        "[bold green]5[/] --> [white]Get meal plans[/]\n"
+        "[bold green]6[/] --> [white]Exit[/]\n",
+        title="[bold yellow]Main Menu[/]",
+        border_style="bright_blue",
+        box=box.ROUNDED,
+        padding=(1, 3)
+    ))
+
+    # A clean prompt at the bottom
+    choice = Prompt.ask(" [bold cyan]Enter your choice here! [/]", choices=["1", "2", "3", "4", "5", "6"], default="6")
+    
+    # Confirming user's choice
+    else:
+        console.print("\n [bold magenta]Invalid choice! Exiting the program...")
+        # Created a delay here before exiting for better UX
+        time.sleep(2)
+        exit()
+    return choice
 
 def create_user_profile():
     global current_user
@@ -123,7 +156,7 @@ def create_user_profile():
     weight_in = console.input("Weight in kg [default 62]: ").strip()
     height_in = console.input("Height in cm (leave blank for gender default): ").strip()
 
-    # parse with safe fallbacks
+    # Try-except here for error handling!
     try:
         age = int(age_in) if age_in else None
     except Exception:
@@ -137,6 +170,7 @@ def create_user_profile():
     except Exception:
         height = None
 
+    # Same error handling for gender
     if gender == "M":
         user = Male(age, weight, height)
     elif gender == "F":
@@ -219,14 +253,29 @@ def calculate_bmi(use_profile: bool = True):
 
     console.print(f"[yellow]BMI:[/yellow] {bmi_rounded} kg/m² — [bold]{category}[/bold]")
 
-def main():
+def main() -> None:
+    """
+    This is the main function, where the program roars to life!
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
     while True:
         choice = display_menu()
 
         if choice == "1":
+            console.print("\n [bold green]You have chosen option 1... 'Create user profile'[/]\n")
+            # Created a delay here before showing the create user profile UI for better UX
+            time.sleep(2)
             create_user_profile()
         elif choice == "2":
-            console.print("[blue]View Workout Plans[/blue] - Under Construction")
+            console.print("\n [bold magenta]You have chosen option 2... 'Get workout plans'[/]\n")
+            # Created a delay here before showing next UI for better UX
+            time.sleep(2)
+            # Keep redirecting to different functions with different choices!
         elif choice == "3":
             console.print("[blue]Track Progress[/blue] - Under Construction")
         elif choice == "4":
@@ -250,3 +299,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
