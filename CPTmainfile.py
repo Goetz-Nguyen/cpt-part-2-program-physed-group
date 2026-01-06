@@ -4,10 +4,13 @@ date finished: January 12, 2026
 ICS4U CPT - PhysEd Workout App
 """
 
-# Importing modules we'll use for the entirety of this program!
+# Importing modules we'll use for the entirety of this program
+import time
+from rich.panel import Panel
+from rich import box
 from rich.console import Console
 console = Console()
-current_user = None  # will hold the created user profile
+current_user = None  # An empty variable to hold different credentials
 
 class Human:
     """
@@ -293,5 +296,6 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 
 
