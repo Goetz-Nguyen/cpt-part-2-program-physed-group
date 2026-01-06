@@ -137,14 +137,7 @@ def display_menu() -> str:
     ))
 
     # A clean prompt at the bottom
-    choice = Prompt.ask(" [bold cyan]Enter your choice here! [/]", choices=["1", "2", "3", "4", "5", "6"], default="6")
-    
-    # Confirming user's choice
-    else:
-        console.print("\n [bold magenta]Invalid choice! Exiting the program...")
-        # Created a delay here before exiting for better UX
-        time.sleep(2)
-        exit()
+    choice = console.print(" [bold cyan]Enter your choice here! [/]")
     return choice
 
 def create_user_profile():
@@ -295,8 +288,10 @@ def main() -> None:
             console.print("[red]Exiting application...[/red]")
             break
         else:
-            console.print("[red]Invalid choice. Please try again.[/red]")
+            console.print("[red]Invalid choice, buddy! Try again.[/red]")
+            time.sleep(2)
 
 if __name__ == "__main__":
     main()
+
 
