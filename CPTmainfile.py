@@ -116,8 +116,8 @@ def display_menu() -> str:
     # The welcome screen!
     console.print(Panel(
         "[bold cyan]Welcome![/]\n\n"
-        "This is a PhysEd workout app, made to [bold yellow]promote PhysEd[/] to explore maths (and also physics)!\n\n"
-        "Made by: Jacksen Daniels Daekin, Aidan Dwyer, Matteo Orlando, Japjot Singh Rajbans"
+        "This is a PhysEd workout app, made to [bold yellow]promote PhysEd[/] with useful features!\n\n"
+        "Made by: Jacksen Daniels Daekin, Aidan Dwyer, Matteo Orlando, Japjot Singh Rajbans\n\n"
         "[bold green]Let's begin, shall we? :)[/]",
         title="[bold white]PhysEd Workout App[/]",
         border_style="bright_magenta",
@@ -127,7 +127,7 @@ def display_menu() -> str:
 
     # Main Menu
     console.print(Panel(
-        "[bold green]1[/] --> [white]Create user profile[/]\n",
+        "[bold green]1[/] --> [white]Create user profile[/]\n"
         "[bold green]2[/] --> [white]Get workout plans[/]\n"
         "[bold green]3[/] --> [white]Track progress via graph[/]\n"
         "[bold green]4[/] --> [white]Calculate your BMI![/]\n"
@@ -140,7 +140,7 @@ def display_menu() -> str:
     ))
 
     # A clean prompt at the bottom
-    choice = console.print(" [bold cyan]Enter your choice here! [/]")
+    choice = console.input(" [bold cyan]Enter your choice here! [/]")
     return choice
 
 def create_user_profile():
@@ -296,6 +296,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-
-
