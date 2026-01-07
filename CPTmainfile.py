@@ -188,6 +188,66 @@ def create_user_profile():
     console.print(f" - Weight: {current_user.weight} kg")
     console.print(f" - Height: {getattr(current_user, 'height', 'Not set')} cm")
 
+def calculate_bmr(use_profile: bool = True):
+
+
+    weight = None
+    height_cm = None
+    age = 0
+
+
+    if use_profile and current_user is not None:
+        weight = current_user.weight
+        height_cm = current_user.height
+        age = current_user.age
+        if height_cm is None:
+            h_in = console.input("Profile has no height. Enter height in cm: ").strip()
+            try:
+                height_cm = float(h_in)
+            except Exception:
+                console.print("[red]Invalid height. Aborting BMI calculation.[/red]")
+                return
+    else:
+        w_in = console.input("Enter weight in kg: ").strip()
+        h_in = console.input("Enter height in cm: ").strip()
+        a_in = console.input("Enter age:").strip()
+        try:
+            weight = float(w_in)
+            height_cm = float(h_in)
+            age = float(a_in)
+        except Exception:
+            console.print("[red]Invalid input. Aborting BMI calculation.[/red]")
+            return
+
+
+    # Basic validation
+    if weight is None or height_cm is None:
+        console.print("[red]Missing data. Aborting.[/red]")
+        return
+    if weight <= 0:
+        console.print("[red]Weight must be positive. Aborting.[/red]")
+        return
+    if height_cm <= 0:
+        console.print("[red]Height must be positive. Aborting.[/red]")
+        return
+
+
+    # Calculation
+    mens_bmr = (10 * weight) + (6.25 * height_cm) - (5 * age) + 5
+
+
+    female_bmr = (10 * weight) + (6.25 * height_cm) - (5 * age) - 161
+   
+
+
+    # Simple WHO categories
+    if current_user == Male:
+        console.print(f"Your daily calories your should intake is {mens_bmr}")
+    else:
+        console.print(f"Your daily calories your should intake is {female_bmr}")
+
+
+
 def calculate_bmi(use_profile: bool = True):
     """
     Simple, clear BMI calculator:
@@ -286,7 +346,10 @@ def main() -> None:
                 else:
                     calculate_bmi(use_profile=False)
         elif choice == "5":
-            console.print("[blue]Get Nutrition Advice[/blue] - Under Construction")
+            console.print("\n [bold blue]You have chosen option 5... 'Meal Plan and Nutrittion'[/]\n")
+            # Created a delay here before showing the create user profile UI for better UX
+            time.sleep(2)
+            calculate_bmr(use_profile=True)
         elif choice == "6":
             console.print("[red]Exiting application...[/red]")
             break
