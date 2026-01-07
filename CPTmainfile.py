@@ -23,7 +23,7 @@ class Human:
 
         Invariants:
             - Age must be typed in, else, age will be assumed as 18.
-            - Age must be greater than zero and lesser than hundred.
+            - Age must be greater than zero and lesser than 122 years. The upper bound is specific, as the oldest living human in the world was 122 years old.
             - Weight must be typed in, else, weight will be assumed as 62 kgs.
             - Weight must be greater than zero and lesser than 635 kgs. The upper bound is specific, as the heaviest human in the world was recorded to be 635 kgs.
 
@@ -40,7 +40,7 @@ class Human:
             age = int(age)
         except Exception:
             age = 18
-        if age <= 0 or age > 100:
+        if age <= 0 or age > 122:
             age = 18
 
         if weight is None:
@@ -296,3 +296,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
