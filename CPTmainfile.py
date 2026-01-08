@@ -415,19 +415,19 @@ def create_user_profile() -> None:
     time.sleep(1)
     console.print("\n")
 
-def calculate_cardio_plan():
+def calculate_workout_plan():
     print("Cardio and weight loss program")
 
-    # User Inputs
+    # User Input
     gender = input("Enter gender (male/female): ").lower()
-    weight_kg = float(input("Enter weight (kg): "))
-    height_cm = float(input("Enter height (cm): "))
-    age = int(input("Enter age (years): "))
+    weight_kg = float(input("Enter weight in kg's: "))
+    height_cm = float(input("Enter height in cm's: "))
+    age = int(input("Enter age in years: "))
     weight_to_lose_kg = float(input("How many kg do you want to lose total? "))
     days_to_reach_goal = int(input("In how many days? "))
 
-    # Strength training experience level
-    print("\nStrength Training Experience Levels:")
+    # Strength training experience levels and workouts based on it
+    print("\nStrength Training Level:")
     print("1. Beginner")
     print("2. Intermediate")
     print("3. Advanced")
@@ -443,20 +443,42 @@ def calculate_cardio_plan():
         level = "advanced"
         muscle_gain_per_month = 0.20
 
-    # 1. Calculate Basal Metabolic Rate (BMR)
+    # Strength training optinons
+    strength_plans = {
+        "beginner": [
+            "Full body workout 3 times per week",
+            "Exercises: Squats, Push ups, Dumbbell Rows, Lunges, Planks",
+            "3 sets per exercise, 8 to 12 reps",
+            "Rest 60 to 90 seconds between sets"
+        ],
+        "intermediate": [
+            "Upper and Lower split 4 times per week",
+            "Exercises: Bench Press, Deadlift, Rows, Shoulder Press, Leg Press",
+            "4 sets per exercise, 6 to 10 reps",
+            "Rest 90 to 120 seconds between sets"
+        ],
+        "advanced": [
+            "Push/Pull/Legs split 5 to 6 times per week",
+            "Exercises: Squat, Deadlift variations, Bench variations, Pull ups, Rows",
+            "4 to 5 sets per exercise, 5 to 8 reps",
+            "Rest 2 to 3 minutes between sets"
+        ]
+    }
+
+    # 1. Calculate BMR
     if gender == 'male':
         bmr = (10 * weight_kg) + (6.25 * height_cm) - (5 * age) + 5
     else:
         bmr = (10 * weight_kg) + (6.25 * height_cm) - (5 * age) - 161
 
-    # 2. Calculate Total Daily Energy Expenditure (TDEE) - Sedentary
+    # 2. Calculate Total Daily Energy Expenditure 
     tdee = bmr * 1.2
 
     # 3. Calculate Total Calorie Deficit Needed
     total_deficit_needed = weight_to_lose_kg * 7700
     daily_deficit_target = total_deficit_needed / days_to_reach_goal
 
-    # 4. Cardio Options (MET values)
+    # 4. Cardio Options 
     cardio_types = {
         "Walking (brisk)": 4.3,
         "Jogging": 7.0,
@@ -465,7 +487,7 @@ def calculate_cardio_plan():
         "Swimming Laps": 7.0
     }
 
-    # 5. Estimate muscle gain (general, non-medical)
+    # 5. Estimated general muscle gain 
     muscle_gain_kg = muscle_gain_per_month * (days_to_reach_goal / 30)
 
     print(f"\n--- Results ---")
@@ -480,8 +502,13 @@ def calculate_cardio_plan():
 
     print(f"\nEstimated Muscle Gain from Strength Training ({level}): {muscle_gain_kg:.2f} kg")
 
+    print("\nRecommended Strength Training Plan:")
+    for line in strength_plans[level]:
+        print(f"- {line}")
+
+
 if __name__ == "__main__":
-    calculate_cardio_plan()
+    calculate_workout_plan()
 
 
 def calculate_bmr(use_profile: bool = True):
