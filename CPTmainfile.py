@@ -18,7 +18,7 @@ class Human:
     The weight is measured in kilograms, not pounds, to align with the Canadian and the global weight standards.
     """
 
-    def __init__(self, _age: int | None, _weight: int | float | None):
+    def __init__(self, _age: int | None, _weight: int | float | None, gender: str | None = None):
         """
         Initializes attributes for this class.
 
@@ -44,7 +44,8 @@ class Human:
             _age = 18
         if _age <= 0 or _age > 122:
             _age = 18
-
+        if gender is None:
+            gender = "Not specified"
         if _weight is None:
             _weight = 62.0
         try:
@@ -53,11 +54,23 @@ class Human:
             _weight = 62.0
         if _weight <= 0 or _weight > 635:
             _weight = 62.0
-
+        self._gender = gender
         self._age = _age
         self._weight = _weight
         # Height is optional and will be set by subclasses or externally (in cm, of course)
         self._height = None
+
+    def get_gender(self) -> str:
+        """
+        Returns the gender of the user.
+
+        Args:
+            None
+
+        Returns:
+            str: The gender of the user.
+        """
+        return self._gender
 
     def get_age(self):
         """
@@ -82,6 +95,18 @@ class Human:
             int | float: The weight of the user.
         """
         return self._weight
+
+    def set_gender(self, new_gender: str) -> None:
+        """
+        Sets the gender of the user.
+
+        Args:
+            new_gender (str): The new gender of the user.
+
+        Returns:
+            None
+        """
+        self._gender = new_gender
 
     def set_age(self, new_age: int) -> None:
         """
@@ -179,7 +204,7 @@ class Male(Human):
     """
     This is the Male subclass. It inherits everything from Human, but with a gender-specific default height!
     """
-    def __init__(self, age: int | None = None, weight: int | float | None = None, height: int | float | None = None):
+    def __init__(self, age: int | None = None, weight: int | float | None = None, height: int | float | None = None, gender: str | None = None):
         """
         Initializes a Male object.
 
@@ -191,7 +216,7 @@ class Male(Human):
         Returns:
             None
         """
-        super().__init__(age, weight)
+        super().__init__(age, weight, gender)
         if height is None:
             self._height = 171.0 # Average male height around the world
         else:
@@ -216,7 +241,7 @@ class Female(Human):
     """
     This is the Female subclass. Just like the Male class, it inherits everything from Human, but with a gender-specific default height!
     """
-    def __init__(self, age: int | None = None, weight: int | float | None = None, height: int | float | None = None):
+    def __init__(self, age: int | None = None, weight: int | float | None = None, height: int | float | None = None, gender: str | None = None):
         """
         Initializes a Female object.
 
@@ -228,7 +253,7 @@ class Female(Human):
         Returns:
             None
         """
-        super().__init__(age, weight)
+        super().__init__(age, weight, gender)
         if height is None:
             self._height = 159.0 # Average female height around the world
         else:
