@@ -235,24 +235,37 @@ def calculate_bmi(use_profile: bool = True):
 def calculate_bmr(use_profile: bool = True):
 
     weight = None
-    height_cm = None
+    height = None
+    gender = None
     age = 0
 
     if use_profile and current_user is not None:
         weight = current_user.weight
-        height_cm = current_user.height
+        height = current_user.height
         age = current_user.age
-        if height_cm is None:
+        gender = None
+
+
+        if height is None:
             h_in = console.input("Profile has no height. Enter height in cm: ").strip()
             try:
-                height_cm = float(h_in)
+                height = float(h_in)
             except Exception:
                 console.print("[red]Invalid height. Aborting BMI calculation.[/red]")
                 return
     else:
-        w_in = console.input("Enter weight in kg: ").strip()
-        h_in = console.input("Enter height in cm: ").strip()
-        a_in = console.input("Enter age:").strip()
+        gender = console.input("Enter gender: ").strip()
+        if gender == "M":
+            user = Male(age, weight, height)
+        elif gender == "F":
+            user = Female(age, weight, height)
+        else:
+            user = Human(age, weight)
+            
+            w_in = console.input("Enter weight in kg: ").strip()
+            h_in = console.input("Enter height in cm: ").strip()
+            a_in = console.input("Enter age:").strip()
+        
         try:
             weight = float(w_in)
             height_cm = float(h_in)
@@ -282,6 +295,13 @@ def calculate_bmr(use_profile: bool = True):
     if current_user == Male:
         mens_bmr
         console.print(f"Your daily calories your should intake is {mens_bmr}")
+        goal = input("Is your goal to gain or lose weight (type gain or lose :")
+        if mens_bmr <= 1500 and goal == "lose":
+            print("recipe lose weight male 1500")
+        if mens_bmr <= 1500 and goal == "gain":    
+            print("recipe gain weight male 1500")
+        else:
+            print ("error")
     else:
         female_bmr
         console.print(f"Your daily calories your should intake is {female_bmr}")
