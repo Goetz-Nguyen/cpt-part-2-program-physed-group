@@ -119,7 +119,7 @@ class Human:
             new_weight = 62.0
         self._weight = new_weight
 
-    def get_height(self) -> int | float:
+    def get_height(self) -> int | float | None:
         """
         Returns the height of the user.
 
@@ -127,7 +127,7 @@ class Human:
             None
 
         Returns:
-            int | float: The height of the user.
+            int | float | None: The height of the user.
         """
         return self._height
 
@@ -422,7 +422,7 @@ def calculate_bmr(use_profile: bool = True):
 
     if use_profile and current_user is not None:
         weight = current_user._weight
-        height_cm = current_user.height
+        height_cm = current_user.get_height()
         age = current_user._age
         if height_cm is None:
             h_in = console.input("Profile has no height. Enter height in cm: ").strip()
@@ -566,8 +566,6 @@ def main() -> None:
             time.sleep(2)
         elif choice == "3":
             console.print("[blue]Track Progress[/blue] - Under Construction")
-            # Imported the graphing function here
-            from graph import plotting
         elif choice == "4":
             # use profile if available, otherwise prompt
             if current_user is not None:
@@ -586,7 +584,6 @@ def main() -> None:
         elif choice == "6":
             console.print("\n [bold blue]You have chosen option 6... 'Start Workout'[/]\n")
             time.sleep(2)
-            from Unemissionize import plotting
             console.print("[blue]Workout Module[/blue] - Under Construction")
         elif choice == "7":
             console.print("[red]Exiting application...[/red]")

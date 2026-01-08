@@ -85,8 +85,8 @@ def plotting(dates: list[str], distances: list[int | float], durations: list[int
 dates = ['January 5, 2026', 'January 6, 2026', 'January 7, 2026', 'January 8, 2026', 'January 9, 2026', 'January 10, 2026']
 
 # Distances and durations (I added an outlier here to test)
-distances = [1, 3, 2, 4, 7, 12] 
-durations = [30, 50, 40, 60, 20, 90]
+distances = [float(x) for x in [1, 3, 2, 4, 7, 12]]
+durations = [float(x) for x in [30, 50, 40, 60, 20, 90]]
 
 # And now we run the program!
 plotting(dates, distances, durations)
