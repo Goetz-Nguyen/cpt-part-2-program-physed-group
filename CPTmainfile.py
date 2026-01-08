@@ -326,7 +326,9 @@ def create_user_profile() -> None:
         padding=(1, 3)
     ))
 
-    gender = console.input(" [bold cyan]Enter your gender here! --> [/]").strip().upper()
+    # Keep the raw input so we can store user's exact entry, but compare an uppercase copy
+    gender_input = console.input(" [bold cyan]Enter your gender here! --> [/]").strip()
+    gender = gender_input.upper()
 
     time.sleep(1)
     console.print("\n")
@@ -394,13 +396,15 @@ def create_user_profile() -> None:
         except (ValueError, TypeError):
             height = None
 
-    # Same error handling for gender
+    # Same error handling for gender and pass the user's gender into the constructed object
     if gender in ("M", "MALE"):
-        user = Male(age, weight, height)
+        user = Male(age, weight, height, gender="Male")
     elif gender in ("F", "FEMALE"):
-        user = Female(age, weight, height)
+        user = Female(age, weight, height, gender="Female")
     else:
-        user = Human(age, weight)
+        # If user provided some custom text (e.g., "Non-binary"), pass it through; otherwise let Human default "Not specified"
+        user_gender_arg = gender_input if gender_input else None
+        user = Human(age, weight, gender=user_gender_arg)
         # We'll choose a 'neutral' default height if nothing's provided!
         if height is None:
             user.set_height(165.0)
@@ -422,9 +426,10 @@ def create_user_profile() -> None:
     else:
         height_str = f"{temporary_height_str} cm"
 
-    # Success message with profile summary
+    # Success message with profile summary (now includes gender)
     console.print(Panel(
         "[bold green]Guess what? Your profile has been successfully created! WOOHOO! Here's a summary:[/]\n"
+        f"[bright_green] - Gender: {current_user.get_gender()}[/]\n"
         f"[bright_green] - Age: {current_user.get_age()}[/]\n"
         f"[bright_green] - Weight: {current_user.get_weight()} kg[/]\n"
         f"[bright_green] - Height: {height_str}[/]",
@@ -483,11 +488,27 @@ def calculate_bmr(use_profile: bool = True):
     mens_bmr = (10 * weight) + (6.25 * height_cm) - (5 * age) + 5
     female_bmr = (10 * weight) + (6.25 * height_cm) - (5 * age) - 161
    
-    # Simple WHO categories
-    if current_user == Male:
+    # Decide based on stored gender or class
+    is_male = False
+    is_female = False
+    if current_user is not None:
+        if isinstance(current_user, Male):
+            is_male = True
+        elif isinstance(current_user, Female):
+            is_female = True
+        else:
+            g = (current_user.get_gender() or "").lower()
+            if g.startswith("m"):
+                is_male = True
+            elif g.startswith("f"):
+                is_female = True
+
+    if is_male:
         console.print(f"Your daily calories your should intake is {mens_bmr}")
-    else:
+    elif is_female:
         console.print(f"Your daily calories your should intake is {female_bmr}")
+    else:
+        console.print(f"[yellow]Estimated BMR (male):[/] {mens_bmr}\n[yellow]Estimated BMR (female):[/] {female_bmr}\n[white]Pick the one appropriate for your gender.[/]")
 
 def calculate_bmi(use_profile: bool = True) -> None:
     """
