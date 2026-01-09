@@ -518,7 +518,7 @@ def calculate_workout_plan() -> None:
         level = "Intermediate"
         muscle_gain_rate = 0.40
         strength_plan = [
-            "Upper / Lower split (4- per week)",
+            "Upper / Lower split (4x per week)",
             "4 sets, 6-10 reps",
             "Rest 90-120 seconds"]
     else:
@@ -560,9 +560,7 @@ def calculate_workout_plan() -> None:
 
     # Final output panel
     console.print(Panel(
-        f"[bold green]Daily Maintenance Calories (TDEE):[/] {tdee:.0f} kcal\n"
-        f"[bold green]Daily Calorie Deficit Needed:[/] {daily_deficit:.0f} kcal\n\n"
-        "[bold cyan]Recommended Daily Cardio[/]\n"
+        "[bold cyan]Recommended Daily Cardio (Choose One)[/]\n"
         f"{cardio_output}\n"
         f"[bold magenta]Estimated Muscle Gain ({level}):[/] {estimated_muscle_gain:.2f} kg\n\n"
         "[bold yellow]Strength Training Plan[/]\n" +
