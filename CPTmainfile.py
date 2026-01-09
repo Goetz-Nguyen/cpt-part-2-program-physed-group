@@ -576,68 +576,93 @@ def calculate_workout_plan() -> None:
 
 def calculate_bmr(use_profile: bool = True):
     weight = None
-    height_cm = None
+    height = None
     age = 0
 
     if use_profile and current_user is not None:
         weight = current_user._weight
-        height_cm = current_user.get_height()
+        height = current_user.get_height()
         age = current_user._age
-        if height_cm is None:
-            h_in = console.input("Profile has no height. Enter height in cm: ").strip()
-            try:
-                height_cm = float(h_in)
-            except (ValueError, TypeError):
-                console.print("[red]Invalid height. Aborting BMI calculation.[/red]")
-                return
-    else:
-        w_in = console.input("Enter weight in kg: ").strip()
-        h_in = console.input("Enter height in cm: ").strip()
-        a_in = console.input("Enter age:").strip()
-        try:
-            weight = float(w_in)
-            height_cm = float(h_in)
-            age = float(a_in)
-        except Exception:
-            console.print("[red]Invalid input. Aborting BMI calculation.[/red]")
-            return
+        gender = current_user.get_gender()
 
-    # Basic validation
-    if weight is None or height_cm is None:
+    else:
+        create_user_profile()
+        weight = current_user._weight
+        height = current_user.get_height()
+        age = current_user._age
+        gender = current_user.get_gender()
+
+        
+    if weight is None or height is None:
         console.print("[red]Missing data. Aborting.[/red]")
         return
     if weight <= 0:
         console.print("[red]Weight must be positive. Aborting.[/red]")
         return
-    if height_cm <= 0:
+    if height <= 0:
         console.print("[red]Height must be positive. Aborting.[/red]")
         return
     
-    # Calculation
-    mens_bmr = (10 * weight) + (6.25 * height_cm) - (5 * age) + 5
-    female_bmr = (10 * weight) + (6.25 * height_cm) - (5 * age) - 161
-   
-    # Decide based on stored gender or class
-    is_male = False
-    is_female = False
-    if current_user is not None:
-        if isinstance(current_user, Male):
-            is_male = True
-        elif isinstance(current_user, Female):
-            is_female = True
-        else:
-            g = (current_user.get_gender() or "").lower()
-            if g.startswith("m"):
-                is_male = True
-            elif g.startswith("f"):
-                is_female = True
-
-    if is_male:
-        console.print(f"Your daily calories your should intake is {mens_bmr}")
-    elif is_female:
-        console.print(f"Your daily calories your should intake is {female_bmr}")
+    if gender == "Male":
+        bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5
     else:
-        console.print(f"[yellow]Estimated BMR (male):[/] {mens_bmr}\n[yellow]Estimated BMR (female):[/] {female_bmr}\n[white]Pick the one appropriate for your gender.[/]")
+        bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161
+
+   
+    console.print(f"Your daily calories your should intake is {bmr}")
+    
+    goal = console.input("Enter your goal (lose / maintain / gain): ").strip().lower()
+
+    if goal == "lose":
+        target = bmr - 300
+        console.print(f"Target calories for weight loss: {target:.0f}")
+    elif goal == "gain":
+        target = bmr + 300
+        console.print(f"Target calories for weight gain: {target:.0f}")
+    else:
+        target = bmr
+        console.print(f"Target calories for maintenance: {target:.0f}")
+
+    meal_plans = {
+        1200: [
+            "Breakfast: Greek yogurt (170 g, nonfat), Blueberries (100 g), Almonds (15 g)",
+            "Lunch: Grilled chicken breast (120 g), Quinoa (100 g cooked), Steamed broccoli (150 g), Olive oil (1 tsp)",
+            "Dinner: Baked salmon (120 g), Sweet potato (200 g baked), Mixed vegetables (150 g), Olive oil (1 tsp)"
+        ],
+        1500: [
+            "Breakfast: Greek yogurt (200 g, nonfat), Banana (1 medium), Almonds (20 g)",
+            "Lunch: Grilled chicken breast (150 g), Brown rice (150 g cooked), Steamed broccoli (150 g), Olive oil (2 tsp)",
+            "Dinner: Baked salmon (150 g), Sweet potato (250 g baked), Mixed vegetables (200 g), Olive oil (2 tsp)"
+        ],
+        1800: [
+            "Breakfast: Greek yogurt (250 g, nonfat), Banana (1 large), Almonds (25 g) ,Honey (1 tbsp)",
+            "Lunch: Grilled chicken breast (180 g), Brown rice (180 g cooked), Steamed broccoli (150 g), Olive oil (1 tbsp) ",
+            "Dinner: Baked salmon (180 g), Sweet potato (300 g baked), Mixed vegetables (200 g), Olive oil (1 tbsp)"
+        ],
+        2000: [
+            "Breakfast: Greek yogurt (300 g, nonfat), Banana (1 large), Almonds (30 g), Honey (1 tbsp)",
+            "Lunch: Grilled chicken breast (200 g), Brown rice (200 g cooked), Steamed broccoli (150 g), Olive oil (1.5 tbsp)",
+            "Dinner: Baked salmon (200 g), Sweet potato (350 g baked), Mixed vegetables (200 g), Olive oil (1.5 tbsp)"
+        ],
+        2200: [
+            "Breakfast: Greek yogurt (350 g, nonfat), Banana (1 large), Almonds (35 g), Honey (1.5 tbsp)",
+            "Lunch: Grilled chicken breast (230 g), Brown rice (230 g cooked), Steamed broccoli (150 g), Olive oil (2 tbsp)",
+            "Dinner: Baked salmon (220 g), Sweet potato (400 g baked), Mixed vegetables (200 g), Olive oil (2 tbsp)"
+
+        ],
+        2500: [
+            "Breakfast: Greek yogurt (400 g, nonfat), Banana (1 large), Almonds (45 g), Honey (2 tbsp)",
+            "Lunch: Grilled chicken breast (260 g), Brown rice (260 g cooked), Steamed broccoli (150 g), Olive oil (2.5 tbsp)",
+            "Dinner: Baked salmon (260 g), Sweet potato (450 g baked), Mixed vegetables (200 g), Olive oil (2.5 tbsp)"
+        ]
+    }
+
+    closest = min(meal_plans.keys(), key=lambda x: abs(x - target))
+
+    #
+    console.print(f"Recommended Meal Plan ({closest} Calories)")
+    for item in meal_plans[closest]:
+        console.print(f"{item}")
 
 def calculate_bmi(use_profile: bool = True) -> None:
     """
