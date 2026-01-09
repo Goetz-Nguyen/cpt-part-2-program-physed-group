@@ -445,100 +445,135 @@ def create_user_profile() -> None:
     time.sleep(1)
     console.print("\n")
 
-def calculate_workout_plan():
-    print("Cardio and weight loss program")
+def calculate_workout_plan() -> None:
+    """
+    Generates a personalized cardio, weight-loss, and strength-training plan.
+    Uses the current user profile and displays results using the Rich UI.
 
-    # User Input
-    gender = input("Enter gender (male/female): ").lower()
-    weight_kg = float(input("Enter weight in kg's: "))
-    height_cm = float(input("Enter height in cm's: "))
-    age = int(input("Enter age in years: "))
-    weight_to_lose_kg = float(input("How many kg do you want to lose total? "))
-    days_to_reach_goal = int(input("In how many days? "))
+    The function:
+        - Calculates BMR and TDEE
+        - Determines daily calorie deficit needed
+        - Estimates required daily cardio time
+        - Recommends a strength training plan based on experience level
 
-    # Strength training experience levels and workouts based on it
-    print("\nStrength Training Level:")
-    print("1. Beginner")
-    print("2. Intermediate")
-    print("3. Advanced")
-    level_choice = input("Choose your level (1/2/3): ")
+    Args:
+        None
+
+    Returns:
+        None
+    """
+    if current_user is None:
+        console.print("[red]Please create a user profile first.[/red]")
+        console.input("Press Enter to return to the menu...")
+        return
+
+    # Retrieve profile data
+    weight_kg = current_user.get_weight()
+    height_cm = current_user.get_height()
+    age = current_user.get_age()
+    gender = (current_user.get_gender() or "").lower()
+
+    # Ensure height exists
+    if height_cm is None:
+        h_in = console.input("Profile missing height. Enter height in cm: ").strip()
+        try:
+            height_cm = float(h_in)
+        except (ValueError, TypeError):
+            console.print("[red]Invalid height. Returning to menu.[/red]")
+            return
+
+    # Goal input panel
+    console.print(Panel(
+        "[bold cyan]Set Your Weight-Loss Goal[/]\n"
+        "Enter the information below to generate your plan.",
+        title="[bold yellow]Workout Plan Setup[/]",
+        border_style="bright_blue",
+        box=box.ROUNDED,
+        padding=(1, 3)))
+
+    try:
+        weight_to_lose = float(console.input("Kg you want to lose: "))
+        days_to_goal = int(console.input("Days to reach your goal: "))
+    except (ValueError, TypeError):
+        console.print("[red]Invalid input. Returning to menu.[/red]")
+        return
+
+    if weight_to_lose <= 0 or days_to_goal <= 0:
+        console.print("[red]Values must be positive. Returning to menu.[/red]")
+        return
+
+    # Strength level selection
+    console.print("\n[bold cyan]Select Strength Training Level[/]")
+    console.print("1 → Beginner\n2 → Intermediate\n3 → Advanced")
+    level_choice = console.input("Enter choice: ").strip()
 
     if level_choice == "1":
-        level = "beginner"
-        muscle_gain_per_month = 0.75
+        level = "Beginner"
+        muscle_gain_rate = 0.75
+        strength_plan = [
+            "Full-body workout (3x per week)",
+            "3 sets, 8-12 reps",
+            "Rest 60-90 seconds"]
     elif level_choice == "2":
-        level = "intermediate"
-        muscle_gain_per_month = 0.40
+        level = "Intermediate"
+        muscle_gain_rate = 0.40
+        strength_plan = [
+            "Upper / Lower split (4- per week)",
+            "4 sets, 6-10 reps",
+            "Rest 90-120 seconds"]
     else:
-        level = "advanced"
-        muscle_gain_per_month = 0.20
+        level = "Advanced"
+        muscle_gain_rate = 0.20
+        strength_plan = [
+            "Push / Pull / Legs split (5-6x per week)",
+            "4-5 sets, 5-8 reps",
+            "Rest 2-3 minutes"]
 
-    # Strength training optinons
-    strength_plans = {
-        "beginner": [
-            "Full body workout 3 times per week",
-            "Exercises: Squats, Push ups, Dumbbell Rows, Lunges, Planks",
-            "3 sets per exercise, 8 to 12 reps",
-            "Rest 60 to 90 seconds between sets"
-        ],
-        "intermediate": [
-            "Upper and Lower split 4 times per week",
-            "Exercises: Bench Press, Deadlift, Rows, Shoulder Press, Leg Press",
-            "4 sets per exercise, 6 to 10 reps",
-            "Rest 90 to 120 seconds between sets"
-        ],
-        "advanced": [
-            "Push/Pull/Legs split 5 to 6 times per week",
-            "Exercises: Squat, Deadlift variations, Bench variations, Pull ups, Rows",
-            "4 to 5 sets per exercise, 5 to 8 reps",
-            "Rest 2 to 3 minutes between sets"
-        ]
-    }
-
-    # 1. Calculate BMR
-    if gender == 'male':
+    # BMR calculation
+    if gender.startswith("m"):
         bmr = (10 * weight_kg) + (6.25 * height_cm) - (5 * age) + 5
     else:
         bmr = (10 * weight_kg) + (6.25 * height_cm) - (5 * age) - 161
 
-    # 2. Calculate Total Daily Energy Expenditure 
+    # Energy calculations
     tdee = bmr * 1.2
+    total_calorie_deficit = weight_to_lose * 7700
+    daily_deficit = total_calorie_deficit / days_to_goal
 
-    # 3. Calculate Total Calorie Deficit Needed
-    total_deficit_needed = weight_to_lose_kg * 7700
-    daily_deficit_target = total_deficit_needed / days_to_reach_goal
-
-    # 4. Cardio Options 
-    cardio_types = {
+    # Cardio MET values
+    cardio_options = {
         "Walking (brisk)": 4.3,
         "Jogging": 7.0,
-        "Running (10km/h)": 9.8,
+        "Running (10 km/h)": 9.8,
         "Cycling (moderate)": 8.0,
-        "Swimming Laps": 7.0
-    }
+        "Swimming": 7.0}
 
-    # 5. Estimated general muscle gain 
-    muscle_gain_kg = muscle_gain_per_month * (days_to_reach_goal / 30)
+    # Muscle gain estimate
+    estimated_muscle_gain = muscle_gain_rate * (days_to_goal / 30)
 
-    print(f"\n--- Results ---")
-    print(f"Daily Maintenance (TDEE): {tdee:.0f} calories")
-    print(f"Daily deficit needed: {daily_deficit_target:.0f} calories")
-
-    print("\nDaily Cardio Required (if diet remains at maintenance):")
-    for activity, met in cardio_types.items():
+    # Build cardio output
+    cardio_output = ""
+    for activity, met in cardio_options.items():
         calories_per_min = (met * 3.5 * weight_kg) / 200
-        minutes_needed = daily_deficit_target / calories_per_min
-        print(f"- {activity}: {minutes_needed:.0f} minutes per day")
+        minutes_needed = daily_deficit / calories_per_min
+        cardio_output += f"- {activity}: {minutes_needed:.0f} min/day\n"
 
-    print(f"\nEstimated Muscle Gain from Strength Training ({level}): {muscle_gain_kg:.2f} kg")
+    # Final output panel
+    console.print(Panel(
+        f"[bold green]Daily Maintenance Calories (TDEE):[/] {tdee:.0f} kcal\n"
+        f"[bold green]Daily Calorie Deficit Needed:[/] {daily_deficit:.0f} kcal\n\n"
+        "[bold cyan]Recommended Daily Cardio[/]\n"
+        f"{cardio_output}\n"
+        f"[bold magenta]Estimated Muscle Gain ({level}):[/] {estimated_muscle_gain:.2f} kg\n\n"
+        "[bold yellow]Strength Training Plan[/]\n" +
+        "\n".join(f"- {line}" for line in strength_plan),
+        title="[bold yellow]Your Personalized Workout Plan[/]",
+        border_style="green",
+        box=box.ROUNDED,
+        padding=(1, 3)))
 
-    print("\nRecommended Strength Training Plan:")
-    for line in strength_plans[level]:
-        print(f"- {line}")
+    console.input("Press Enter to return to the main menu...")
 
-
-if __name__ == "__main__":
-    calculate_workout_plan()
 
 
 def calculate_bmr(use_profile: bool = True):
@@ -705,7 +740,8 @@ def main() -> None:
             create_user_profile()
         elif choice == "2":
             console.print("\n [bold magenta]You have chosen option 2... 'Get workout plans'[/]\n")
-            time.sleep(2)
+            time.sleep(1)
+            calculate_workout_plan()
         elif choice == "3":
             console.print("[blue]Track Progress[/blue] - Under Construction")
         elif choice == "4":
