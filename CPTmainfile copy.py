@@ -242,8 +242,8 @@ def calculate_bmr(use_profile: bool = True):
         weight = current_user.weight
         height = current_user.height
         age = current_user.age
-        gender = isinstance (current_user, Male)
-    else:
+        gender = current_user.gender
+        
         create_user_profile()
 
     # Basic validation
