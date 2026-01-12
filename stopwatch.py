@@ -1,3 +1,10 @@
+"""
+author: Japjot Singh Rajbans
+date: January 12, 2026
+stopwatch.py
+"""
+
+# Importing modules that are necessary
 import time
 from rich.console import Console
 
