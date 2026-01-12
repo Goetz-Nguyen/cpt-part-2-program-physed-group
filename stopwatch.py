@@ -1,15 +1,15 @@
 import time
+from rich.console import Console
 
-input("press enter to start timer")
-start = time.monotonic()
+console = Console()
 
-print ("Counting...")
-
-input("press enter to start timer")
-end = time.monotonic()
-
-time = end - start
-
-round_time = f"{time:.2f}"
-
-print(f"Time: {round_time}")
+def stopwatch():
+    """
+    Opens a simple stopwatch that starts when the user presses Enter and stops when pressed again.
+    """
+    console.print("[bold green]Stopwatch started. Press Enter to stop.[/]")
+    start = time.perf_counter()
+    input()
+    end = time.perf_counter()
+    console.print(f"[bold cyan]Elapsed time: {end - start:.2f} seconds[/]")
+    console.input("Press Enter to return...")

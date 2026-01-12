@@ -566,7 +566,6 @@ def calculate_workout_plan() -> None:
         bmr = (10 * weight_kg) + (6.25 * height_cm) - (5 * age) - 161
 
     # Energy calculations
-    tdee = bmr * 1.2
     total_calorie_deficit = weight_to_lose * 7700
     daily_deficit = total_calorie_deficit / days_to_goal
 
@@ -635,10 +634,14 @@ def calculate_bmr(use_profile: bool = True) -> None:
 
     else:
         create_user_profile()
-        weight = current_user.get_weight()
-        height = current_user.get_height()
-        age = current_user.get_age()
-        gender = current_user.get_gender()
+        if current_user is not None:
+            weight = current_user.get_weight()
+            height = current_user.get_height()
+            age = current_user.get_age()
+            gender = current_user.get_gender()
+        else:
+            console.print("[red]Failed to create user profile. Aborting.[/red]")
+            return
 
     # Error handling
     if weight is None or height is None:
