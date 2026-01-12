@@ -1,17 +1,12 @@
+"""
+author: Japjot Singh Rajbans
+date: January 12, 2026
+graph.py
+"""
+
 # A fully working graphing program for workout distances and durations with outlier detection
 import matplotlib.pyplot
 import numpy
-
-# We'll replace this part with actual data collection from user input in the main program
-# This piece of code is just a placeholder
-#for i in range(num_workouts):
-#    date_val = input("Date: ")
-#    dist_val = float(input("Distance: "))
-#    dur_val = float(input("Duration: "))
-#    
-#    dates.append(date_val)
-#    distances.append(dist_val)
-#    durations.append(dur_val)
 
 def plotting(dates: list[str], distances: list[int | float], durations: list[int | float]) -> None:
     """
@@ -80,13 +75,6 @@ def plotting(dates: list[str], distances: list[int | float], durations: list[int
     matplotlib.pyplot.tight_layout()
     matplotlib.pyplot.show()
 
-# TESTING...
-# An example of dates, distances, and durations
-dates = ['January 5, 2026', 'January 6, 2026', 'January 7, 2026', 'January 8, 2026', 'January 9, 2026', 'January 10, 2026']
-
-# Distances and durations (I added an outlier here to test)
-distances = [float(x) for x in [1, 3, 2, 4, 7, 12]]
-durations = [float(x) for x in [30, 50, 40, 60, 20, 90]]
-
-# And now we run the program!
-plotting(dates, distances, durations)
+# Used `pass` here because this file is intended to be imported as a module
+if __name__ == "__main__":
+    pass
